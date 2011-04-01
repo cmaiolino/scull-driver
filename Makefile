@@ -18,4 +18,4 @@ default:
 endif
 
 clean:
-	rm -rf scull.ko scull.mod.c scull.mod.o scull.o modules.order Module.symvers scull.ko.unsigned
+	rm -rf scull.ko devices.o fops.o scull.mod.c scull.mod.o scull.o modules.order Module.symvers scull.ko.unsigned
