@@ -55,7 +55,9 @@ scull represents each device with a structure of type struct scull_dev, defined 
 		struct cdev cdev;	 /* Char device structure */
 	}
 
-The open method is provided for the driver to init and prepare itself for later operations, where, in most cases the open method should perform:
+The open method 
+
+is provided for the driver to init and prepare itself for later operations, where, in most cases the open method should perform:
 	- Check for device-specific errors (such as device-not-ready or similar hardware problems)
 	- Initialize the device if it is being opened for the first time
 	- Update the f_op pointer, if necessary
@@ -77,18 +79,22 @@ int c = container_of(b, struct foo, a);
 
 /* int c will contain a pointer to a */
 
+Another way to identify the device being opened, is looking at the minor number stored in the inode structure, that must be used if the device was registered with register_chrdev.
+inode->iminor number is used to obtain the minor number, but, be sure that it corresponds to the device the driver is prepared to handle
 
+The release method
 
+The release method act as the reverse of open method. Is possible to find method implementation called device_close instead of device_release, and the method should perform the following tasks:
+	- Deallocate anything that open allocated in filp->private_data
+	- Shutdown the device on last close
 
+What happens when a device file is closed more times than it is opened ? After all, the dup and fork system calls create copies of the open files without calling open; each of those copies is then closed at program termination.
+Example: most program don't open their stdin device, but all of them end up closing it. How does the driver know when an open device file has really been closed ?
 
+Not every close system call causes the release method to be invoked, only the calls that actually release the device data structure (so, the name's method). The file keeps a counter of how many times a file structure is being used. 
+Neither fork nor dup creates a new file structure (only open does that), but they increment the counter in the existing structure, and the close system call just call the release method when the counter for the file structure drops to 0,
+which happens when the structure is destroyed.
 
+The flush flush methos is called every time an application calls close, but, very few derivers implements flush, because usually there is nothing to perform at close time, unless release is involved.
 
-
-
-
-
-
-
-
-
-
+The previous discussion applies even when the application terminates without explicitly closing its open files, the kernel automatically closes any file at process exit time ( by internally using the close syscall).

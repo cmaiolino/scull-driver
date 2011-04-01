@@ -21,6 +21,12 @@ int scull_open(struct inode *inode, struct file *filp)
 	return 0; /*success*/
 }
 
+/* Nothing special to do, since we don't have any hardware to shutdown for while */
+int scull_release(struct inode *inode, struct file *filp)
+{
+	return 0;
+}
+
 
 
 struct file_operations scull_fops = {
