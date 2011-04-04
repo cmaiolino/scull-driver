@@ -1,4 +1,5 @@
 #include <linux/kernel.h>
+#include <linux/slab.h>
 #include <linux/fs.h>
 #include <linux/types.h>
 #include <linux/fcntl.h>
@@ -6,6 +7,29 @@
 #include "scull.h"
 
 /* File operations in use by the scull driver */
+
+int scull_trim(struct scull_dev *dev)
+{
+	struct scull_qset *next, *dptr;
+	int qset = dev->qset; /*dev is not null*/
+	int i;
+
+	for(dptr = dev->data; dptr; dptr = next){ /* All the list items*/
+		if(dptr->data){
+			for(i=0; i < qset; i++)
+				kfree(dptr->data[i]);
+			kfree(dptr->data);
+			dptr->data = NULL;
+		}
+		next=dptr->next;
+		kfree(dptr);
+	}
+	dev->size = 0;
+	dev->quantum = scull_quantum;
+	dev->qset = scull_qset;
+	dev->data = NULL;
+	return 0;
+}
 
 int scull_open(struct inode *inode, struct file *filp)
 {

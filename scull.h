@@ -30,3 +30,12 @@ struct scull_dev {
         struct semaphore sem;    /* mutual exclusion semaphore */
         struct cdev cdev;        /* Char device structure */
 };
+
+/* Member of linked list to keep track of device's data*/
+struct scull_qset {
+	void **data; /* Stores an array to quantum pointers */
+	struct scull_qset *next; /* Next list member */
+};
+
+
+
