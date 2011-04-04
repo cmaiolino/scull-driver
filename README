@@ -98,3 +98,65 @@ which happens when the structure is destroyed.
 The flush flush methos is called every time an application calls close, but, very few derivers implements flush, because usually there is nothing to perform at close time, unless release is involved.
 
 The previous discussion applies even when the application terminates without explicitly closing its open files, the kernel automatically closes any file at process exit time ( by internally using the close syscall).
+
+READ and WRITE
+
+both perform a similar task, copying data from and to application code. So, their prototypes are pretty similar:
+
+ssize_t read(struct file *filp, char __user *buff, size_t count, loff_t *offp);
+ssize_t write(struct file *filp, const char __user *buff, size_t count, loff_t *offp);
+
+'filp' is the file pointer and 'count' is the size of the requested data transfer. The buff argument points to the user buffer holding the data to be written or the empty buffer where the newly read data should be placed. offp is a pointer to a long offset type object, that indicates the file position the user is accessing. The return value is a 'signed size type'.
+
+the __user flag means a user-space data, so, in the above case, the *buff argument to read and write methods, is a user-space pointer. but, it can not be directly dereferenced by kernel code due the following restrictions:
+
+- Depending on which architecture the driver is running on, and how the kernel was configured, the user-space pointer may not be valid while running in kernel mode at all. There may be no mapping for that address, or it could point to some other random data.
+- Even if the pointer does mean the same thing in kernel space, user-space memory is paged, and the memory in question might not be resident in RAM when the system call is made. Attempting to reference the user-space memory directly could generate a page fault, which is not allowed in kernel code. The result would be an "oops", which would result in the death of the process that made the system call.
+- The pointer in question has been supplied by a user program, which could be buggy or malicious. If the driver blindly dereference a user-supplied pointer, it provides an open doorway allowing a user-space program to access or overwrite memory anywhere in the system. So, never dereference an user-space pointer directly.
+
+The access of user-space buffers should be performed by special, kernel-supplied functions, in order to be safe, defined in <asm/uaccess.h>. These functions use some special architecture-dependent magic to ensure that data transfers between kernel and user space happen in a safe and correct way.
+
+The whole for read/write of scull needs to copy whole segment of data to or from the user address space, such capability is offered by the following kernel functions:
+
+unsigned long copy_to_user(void __user *to, const void *from, unsigned long count);
+unsigned long copy_from_user(void *to, const void __user *from, unsigned long count);
+
+These functions behave like normal memcpy functions, with some extra care, once it access user-space from kernel code. The user pages being addressed might not be present in memory, and the virtual memory can put the process to sleep while the page is being transferred into place, for example, when the page must be retrieved from the swap space. The net result for the driver is that any function that accesses user space must be reentrant, must be able to execute concurrently with another driver functions, and, must legally sleep.
+
+The role of these two functions is not limited to copy data from and to the user space, they also check if the user space pointer is valid or not. If the pointer is invalid, no copy is performed; or if an invalid address is encountered during the copy, only part of the data is copied. In both cases, the return value is the amount of memory to be copied (0 in case of all data was copied)
+
+__copy_to_user and __copy_from_user functions can be used if not necessary to check if the user space pointer is valid or not.
+
+Whatever the amount of data the methods transfer, they should generally update the file position at *offp, after a successful of the system call; The kernel then propagates the file position change back into the file structure when appropriate. The pread and pwrite syscalls operates from a given file offset and do not change the file position.
+
+both read and write methods return a negative value if an error occurs. A value greater than or equal to 0, instead, tells the calling program how many bytes have been successfully transferred. If some data is transferred correctly and an error occurs, the return value must be the count of bytes successfully transferred, and the error does not get reported until the next time the function is called. It requires that the driver remember that the error has occurred.
+
+The kernel functions return a negative nymber to signal an error. and the value of the number indicates the kind of the error that occurred, but, programs that run in user space always see -1 as the error value. They need to access the errno variable to find out what happened.The user space behavior is dictated by the POSIX standard, but that standard does not make requirements on how the kernel operates internally.
+
+the return value for read is interpreted by the calling application program:
+
+- if the value equals the count argument passed to the read system call, the requested number of bytes has been transferred.
+- if the value is positive, but smaller than count, only part of the data has been transferred.
+- if value is 0, end-of-file was reached (and no data was read).
+- a negative value means there was an error, the value specifies what the error was. according to <linux/errno.h>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
