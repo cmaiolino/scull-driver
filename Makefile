@@ -20,4 +20,4 @@ default:
 endif
 
 clean:
-	rm -rf scull.ko devices.o fops.o .fops.cmd scull.mod.c scull.mod.o main.o modules.order Module.symvers scull.ko.unsigned .devices.o.cmd .fops.o.d .scull.ko.cmd .scull.ko.unsigned.cmd .main.mod.o.cmd .main.o.cmd .main.o.d .tmp_versions/
+	rm -rf scull.ko devices.o fops.o .fops.cmd scull.mod.c scull.mod.o main.o modules.order Module.symvers scull.ko.unsigned .devices.o.cmd .fops.o.d .scull.ko.cmd .scull.ko.unsigned.cmd .main.mod.o.cmd .main.o.cmd .main.o.d .fops.o.cmd .tmp_versions/

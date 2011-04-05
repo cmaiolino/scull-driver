@@ -1,0 +1,8 @@
+Version 1.0
+
+Usage:
+	-Load the module
+		#insmod ./scull.ko
+
+	-Create the device file:
+		#mknod /dev/scull0 c <major> 0  (Replace the major number by the one showed in /proc/devices)
