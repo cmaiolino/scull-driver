@@ -4,6 +4,7 @@
 #include <linux/types.h>
 #include <linux/kdev_t.h>
 #include <linux/fs.h>
+#include <linux/slab.h>
 #include "scull.h"
 
 int create_dev(void)
@@ -26,4 +27,36 @@ int create_dev(void)
         }   
 	return result;
 
+}
+
+struct scull_qset *scull_follow(struct scull_dev *dev, int n)
+{
+	struct scull_qset *qs = dev->data;
+
+	/* Allocate first qset explictly if needed */
+	if(!qs){
+		qs = dev->data = kmalloc(sizeof(struct scull_qset), GFP_KERNEL);
+		
+		if(qs == NULL)
+			return NULL; /* Don't care */
+		
+		memset(qs,0,sizeof(struct scull_qset));
+	}
+
+	/* Follow the list */
+	while(n--){
+
+		if(!qs->next){
+			qs->next = kmalloc(sizeof(struct scull_qset), GFP_KERNEL);
+
+			if(qs->next == NULL)
+				return NULL; /* Never mind */
+
+			memset(qs->next,0,sizeof(struct scull_qset));
+		}
+
+		qs = qs->next;
+		continue;
+	}
+	return qs;
 }

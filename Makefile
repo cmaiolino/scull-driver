@@ -2,7 +2,9 @@
 # kernel build system and can use its language.
 
 ifneq ($(KERNELRELEASE),)
-	obj-m += devices.o fops.o scull.o#module target to be compiled
+	scull-objs := devices.o fops.o
+	obj-m := scull.o#module target to be compiled
+
 
 # Otherwise we were called directly from the command
 # line; invoke the kernel build system. 

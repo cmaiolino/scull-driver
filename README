@@ -140,7 +140,12 @@ the return value for read is interpreted by the calling application program:
 - if value is 0, end-of-file was reached (and no data was read).
 - a negative value means there was an error, the value specifies what the error was. according to <linux/errno.h>.
 
+the return value for write is interpreted by the calling application program:
 
+- if the value equals count, the requested number of bytes has been transferred
+- If the value is positive, but smaller than count, only part of the data has been transferred.
+- If the value is 0, nothing was written. This result is not an error.
+- A negative value means an error occurred like in read. Valid error value are defined in <linux/errno.h>
 
 
 

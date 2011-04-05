@@ -8,6 +8,8 @@
 unsigned int scull_major = SCULL_MAJOR;
 unsigned int scull_minor = SCULL_MINOR;
 unsigned int scull_nr_devs = 4; /* number of devices */
+unsigned int scull_quantum = SCULL_QUANTUM;
+unsigned int scull_qset = SCULL_QSET;
 
 /* Create devices */
 static void scull_setup_cdev(struct scull_dev *dev, int index)  /*dev struct not yet initialized into the code. FIXME*/ 
@@ -27,9 +29,15 @@ static void scull_setup_cdev(struct scull_dev *dev, int index)  /*dev struct not
 
 static int scull_init(void)
 {
+	
+	struct scull_dev *dev;
 	printk("Starting scull module...\n");
 	create_dev();
 
+	dev = kmalloc(sizeof(struct scull_dev*),GFP_KERNEL);
+	scull_setup_cdev(dev,5);
+
+	
 	return 0;
 }
 
