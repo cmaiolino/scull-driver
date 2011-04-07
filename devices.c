@@ -68,6 +68,7 @@ int scull_read_procmem(char *buf, char **start, off_t offset,
 	int i, j, len = 0;
 	int limit = count - 80; /* Don't print more than this */
 	
+	len += sprintf(buf,"\nlimit value: %d\n\n",limit);
 	for(i = 0; i < scull_nr_devs && len <= limit; i++){
 		struct scull_dev *d = &scull_devices[i];
 		struct scull_qset *qs = d->data;
@@ -79,7 +80,7 @@ int scull_read_procmem(char *buf, char **start, off_t offset,
 			i, d->qset, d->quantum, d->size);
 		
 		for(;qs && len <= limit; qs = qs->next){ /* Scan the list */
-			len += snprintf(buf+len, " item at %p, qset at %p\n",
+			len += sprintf(buf+len, " item at %p, qset at %p\n",
 				qs, qs->data);
 	
 			if(qs->data && !qs->next){ /* dump only the last item */
