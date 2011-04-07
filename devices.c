@@ -5,6 +5,7 @@
 #include <linux/kdev_t.h>
 #include <linux/fs.h>
 #include <linux/slab.h>
+#include <linux/proc_fs.h>
 #include "scull.h"
 
 int create_dev(void)
@@ -59,4 +60,39 @@ struct scull_qset *scull_follow(struct scull_dev *dev, int n)
 		continue;
 	}
 	return qs;
+}
+
+int scull_read_procmem(char *buf, char **start, off_t offset,
+		int count, int *eof, void *data)
+{
+	int i, j, len = 0;
+	int limit = count - 80; /* Don't print more than this */
+	
+	for(i = 0; i < scull_nr_devs && len <= limit; i++){
+		struct scull_dev *d = &scull_devices[i];
+		struct scull_qset *qs = d->data;
+		
+		if(down_interruptible(&d->sem))
+			return -ERESTARTSYS;
+
+		len += sprintf(buf+len,"\nDevice: %i: qset %i, q %i, sz %li\n",
+			i, d->qset, d->quantum, d->size);
+		
+		for(;qs && len <= limit; qs = qs->next){ /* Scan the list */
+			len += snprintf(buf+len, " item at %p, qset at %p\n",
+				qs, qs->data);
+	
+			if(qs->data && !qs->next){ /* dump only the last item */
+				for(j = 0; j < d->qset; j++){
+					if(qs->data[j])
+						len += sprintf(buf+len, 
+							"   % 4i: %8p\n",
+							j, qs->data[j]);
+				}
+			}
+		}
+		up(&scull_devices[i].sem);
+	}
+	*eof = 1;
+	return len;
 }
