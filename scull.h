@@ -1,11 +1,30 @@
 #include <linux/cdev.h>
 #include <linux/module.h>
 
+/* DEBUG */
+
+#undef DEBUG_ON
+
+#ifdef DEBUG_MODE
+	/* Enable debug messages */
+#ifdef __KERNEL__
+#define DEBUG_ON(fmt, args...) printk(KERN_DEBUG "scull: " fmt, ## args)
+#else
+#define DEBUG_ON(fmt, args...) fprintf(stderr, fmt, ## args)
+#endif
+#else
+#define DEBUG_ON(fmt, args...) /*No debug if DEBUG_MODE is not defined*/
+#endif
+
+#undef DEBUG_OFF
+#define DEBUG_OFF(fmt,args...) /* Disable debug */
 
 /* defines the major number of the devices, if 0 the major is dinamically allocated */
 #define SCULL_MAJOR 0
 /* first minor to be allocated on the device */
 #define SCULL_MINOR 0
+
+#define SCULL_NR_DEVS 4
 
 #define SCULL_QUANTUM 4000
 #define SCULL_QSET 1000
@@ -14,7 +33,7 @@ extern unsigned int scull_minor;
 extern unsigned int scull_nr_devs; /* number of devices */
 extern unsigned int scull_quantum;
 extern unsigned int scull_qset;
-extern struct scull_dev *dev;
+extern struct scull_dev *scull_devices;
 /* device number */
 /*dev_t dev;*/
  
@@ -46,4 +65,7 @@ struct scull_qset {
 };
 
 
+/* proc file function prototypes */
+int scull_read_procmem(char *buf, char **start, off_t offset,
+                int count, int *eof, void *data);
 
