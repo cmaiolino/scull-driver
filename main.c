@@ -3,13 +3,17 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h> /* Parameters definition */
 #include <linux/kdev_t.h>
+#include <linux/proc_fs.h>
 #include "scull.h"
 
 unsigned int scull_major = SCULL_MAJOR;
 unsigned int scull_minor = SCULL_MINOR;
-unsigned int scull_nr_devs = 4; /* number of devices */
+unsigned int scull_nr_devs = SCULL_NR_DEVS; /* number of devices */
 unsigned int scull_quantum = SCULL_QUANTUM;
 unsigned int scull_qset = SCULL_QSET;
+
+/* Device list */
+struct scull_dev *scull_devices;
 
 /* Create devices */
 static void scull_setup_cdev(struct scull_dev *dev, int index)  /*dev struct not yet initialized into the code. FIXME*/ 
@@ -30,14 +34,21 @@ static void scull_setup_cdev(struct scull_dev *dev, int index)  /*dev struct not
 static int scull_init(void)
 {
 	
-	struct scull_dev *dev;
+	int i;
+
 	printk("Starting scull module...\n");
 	create_dev();
 
-	dev = kmalloc(sizeof(struct scull_dev),GFP_KERNEL);
-	memset(dev,0,sizeof(struct scull_dev));
-	init_MUTEX(&dev->sem);
-	scull_setup_cdev(dev,0);
+	scull_devices = kmalloc(sizeof(struct scull_dev) * scull_nr_devs,GFP_KERNEL);
+	memset(scull_devices,0,sizeof(struct scull_dev)*scull_nr_devs);
+	
+	for(i=0; i<scull_nr_devs;i++){
+		init_MUTEX(&scull_devices[i].sem);
+		scull_setup_cdev(&scull_devices[i],i);
+	}
+
+	/* create proc file */
+	create_proc_read_entry("scullmem", 0, NULL, scull_read_procmem, NULL);
 
 	
 	return 0;
@@ -46,6 +57,7 @@ static int scull_init(void)
 static void scull_exit(void)
 {
 	printk("Unloading scull module...\n");
+	remove_proc_entry("scullmem",NULL);
 }
 
 module_init(scull_init);
