@@ -48,7 +48,8 @@ static int scull_init(void)
 	}
 
 	/* create proc file */
-	create_proc_read_entry("scullmem", 0, NULL, scull_read_procmem, NULL);
+	/* create_proc_read_entry("scullmem", 0, NULL, scull_read_procmem, NULL); */
+	procfile_setup();
 
 	
 	return 0;

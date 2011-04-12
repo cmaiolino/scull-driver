@@ -46,6 +46,7 @@ extern struct file_operations scull_fops;
 //int scull_open(struct inode *inode, struct file *filp);
 extern struct scull_qset *scull_follow(struct scull_dev *dev,int n);
 extern int create_dev(void);
+extern void procfile_setup(void);
 
 /* this structure identifies each device into the driver */
 struct scull_dev {
