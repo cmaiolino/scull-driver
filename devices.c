@@ -120,7 +120,7 @@ static int scull_seq_show(struct seq_file *s, void *v)
 static struct seq_operations scull_seq_ops = {
 	.start = scull_seq_start,
 	.next  = scull_seq_next,
-	.show  = scull_seq_show
+	.show  = scull_seq_show,
 	.stop  = scull_seq_stop
 };
 

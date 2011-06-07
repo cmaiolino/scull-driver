@@ -4,6 +4,7 @@
 #include <linux/moduleparam.h> /* Parameters definition */
 #include <linux/kdev_t.h>
 #include <linux/proc_fs.h>
+#include <linux/semaphore.h>
 #include "scull.h"
 
 unsigned int scull_major = SCULL_MAJOR;
@@ -43,7 +44,7 @@ static int scull_init(void)
 	memset(scull_devices,0,sizeof(struct scull_dev)*scull_nr_devs);
 	
 	for(i=0; i<scull_nr_devs;i++){
-		init_MUTEX(&scull_devices[i].sem);
+		sema_init(&scull_devices[i].sem,1);
 		scull_setup_cdev(&scull_devices[i],i);
 	}
 

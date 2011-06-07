@@ -1,0 +1,62 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DEBFLAGS	Makefile	/^ DEBFLAGS = -O -g -DDEBUG_MODE # "-O" expand inlines$/;"	m
+DEBFLAGS	Makefile	/^ DEBFLAGS = -O2$/;"	m
+DEBUG	Makefile	/^DEBUG = y$/;"	m
+DEBUG_OFF	scull.h	19;"	d
+DEBUG_OFF	scull.h	20;"	d
+DEBUG_ON	scull.h	11;"	d
+DEBUG_ON	scull.h	13;"	d
+DEBUG_ON	scull.h	16;"	d
+DEBUG_ON	scull.h	6;"	d
+KERNELDIR	Makefile	/^	KERNELDIR ?= \/lib\/modules\/$(shell uname -r)\/build$/;"	m
+PWD	Makefile	/^	PWD := $(shell pwd)$/;"	m
+SCULL_MAJOR	scull.h	23;"	d
+SCULL_MINOR	scull.h	25;"	d
+SCULL_NR_DEVS	scull.h	27;"	d
+SCULL_QSET	scull.h	30;"	d
+SCULL_QUANTUM	scull.h	29;"	d
+access_key	scull.h	/^        unsigned int access_key; \/* used by sculluid and scullpriv *\/$/;"	m	struct:scull_dev
+cdev	scull.h	/^        struct cdev cdev;        \/* Char device structure *\/$/;"	m	struct:scull_dev	typeref:struct:scull_dev::cdev
+create_dev	devices.c	/^int create_dev(void)$/;"	f
+data	scull.h	/^	void **data; \/* Stores an array to quantum pointers *\/$/;"	m	struct:scull_qset
+data	scull.h	/^        struct scull_qset *data; \/* Pointer to first quantum set *\/$/;"	m	struct:scull_dev	typeref:struct:scull_dev::scull_qset
+next	scull.h	/^	struct scull_qset *next; \/* Next list member *\/$/;"	m	struct:scull_qset	typeref:struct:scull_qset::scull_qset
+obj-m	Makefile	/^	obj-m := scull.o#module target to be compiled$/;"	m
+procfile_setup	devices.c	/^void procfile_setup(void)$/;"	f
+qset	scull.h	/^        int qset;                \/* the current array size *\/$/;"	m	struct:scull_dev
+quantum	scull.h	/^        int quantum;             \/* the current quantum size *\/$/;"	m	struct:scull_dev
+scull-objs	Makefile	/^	scull-objs := devices.o fops.o main.o$/;"	m
+scull_dev	scull.h	/^struct scull_dev {$/;"	s
+scull_devices	main.c	/^struct scull_dev *scull_devices;$/;"	v	typeref:struct:scull_dev
+scull_exit	main.c	/^module_exit(scull_exit);$/;"	v
+scull_exit	main.c	/^static void scull_exit(void)$/;"	f	file:
+scull_follow	devices.c	/^struct scull_qset *scull_follow(struct scull_dev *dev, int n)$/;"	f
+scull_fops	fops.c	/^struct file_operations scull_fops = {$/;"	v	typeref:struct:file_operations
+scull_init	main.c	/^module_init(scull_init);$/;"	v
+scull_init	main.c	/^static int scull_init(void)$/;"	f	file:
+scull_major	main.c	/^unsigned int scull_major = SCULL_MAJOR;$/;"	v
+scull_minor	main.c	/^unsigned int scull_minor = SCULL_MINOR;$/;"	v
+scull_nr_devs	main.c	/^unsigned int scull_nr_devs = SCULL_NR_DEVS; \/* number of devices *\/$/;"	v
+scull_open	fops.c	/^int scull_open(struct inode *inode, struct file *filp)$/;"	f
+scull_proc_open	devices.c	/^static int scull_proc_open(struct inode *inode, struct file *file)$/;"	f	file:
+scull_proc_ops	devices.c	/^static struct file_operations scull_proc_ops = {$/;"	v	typeref:struct:file_operations	file:
+scull_qset	main.c	/^unsigned int scull_qset = SCULL_QSET;$/;"	v
+scull_qset	scull.h	/^struct scull_qset {$/;"	s
+scull_quantum	main.c	/^unsigned int scull_quantum = SCULL_QUANTUM;$/;"	v
+scull_read	fops.c	/^ssize_t scull_read(struct file *filp, char __user *buf, size_t count,$/;"	f
+scull_release	fops.c	/^int scull_release(struct inode *inode, struct file *filp)$/;"	f
+scull_seq_next	devices.c	/^static void *scull_seq_next(struct seq_file *s, void *v, loff_t *pos) \/* *v is the iterator returned by previous call to start or next *\/$/;"	f	file:
+scull_seq_ops	devices.c	/^static struct seq_operations scull_seq_ops = {$/;"	v	typeref:struct:seq_operations	file:
+scull_seq_show	devices.c	/^static int scull_seq_show(struct seq_file *s, void *v)$/;"	f	file:
+scull_seq_start	devices.c	/^static void *scull_seq_start(struct seq_file *s, loff_t *pos) \/* pos is an index to a scull_devices array *\/$/;"	f	file:
+scull_seq_stop	devices.c	/^static void *scull_seq_stop(struct seq_file *s, void *v)$/;"	f	file:
+scull_setup_cdev	main.c	/^static void scull_setup_cdev(struct scull_dev *dev, int index)  \/*dev struct not yet initialized into the code. FIXME*\/ $/;"	f	file:
+scull_trim	fops.c	/^int scull_trim(struct scull_dev *dev)$/;"	f
+scull_write	fops.c	/^ssize_t scull_write(struct file *filp, const char __user *buf, size_t count,$/;"	f
+sem	scull.h	/^        struct semaphore sem;    \/* mutual exclusion semaphore *\/$/;"	m	struct:scull_dev	typeref:struct:scull_dev::semaphore
+size	scull.h	/^        unsigned long size;      \/* amount of data stored here *\/$/;"	m	struct:scull_dev
