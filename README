@@ -1,1 +1,3 @@
-This is a device driver based on the LDD3 (Linux Device Drivers v3) book.
+This is a simple fork of my scull-driver repository.
+The idea of this fork is to implement a pipe-like device
+and make use of blocking and non-blocking I/O features 
