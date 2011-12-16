@@ -12,7 +12,7 @@
 int create_dev(void)
 {
 
-        int result = -1; 
+        int result = -1;
 	dev_t dev;
 
         if(scull_major){
@@ -21,12 +21,12 @@ int create_dev(void)
         }else{
                 result = alloc_chrdev_region(&dev, scull_minor, scull_nr_devs, "scull");
                 scull_major = MAJOR(dev);
-        }   
+        }
 
-        if(result < 0){ 
+        if(result < 0){
                 /* clean up */
                 printk(KERN_WARNING "scull: Can't get major device number %d\n", scull_major);
-        }   
+        }
 	return result;
 
 }
@@ -38,10 +38,10 @@ struct scull_qset *scull_follow(struct scull_dev *dev, int n)
 	/* Allocate first qset explictly if needed */
 	if(!qs){
 		qs = dev->data = kmalloc(sizeof(struct scull_qset), GFP_KERNEL);
-		
+
 		if(qs == NULL)
 			return NULL; /* Don't care */
-		
+
 		memset(qs,0,sizeof(struct scull_qset));
 	}
 
@@ -69,7 +69,7 @@ static void *scull_seq_start(struct seq_file *s, loff_t *pos) /* pos is an index
 {
 	if (*pos >= scull_nr_devs)
 		return NULL; /* no more to read */
-	
+
 	return scull_devices + *pos;
 }
 
@@ -79,12 +79,11 @@ static void *scull_seq_next(struct seq_file *s, void *v, loff_t *pos) /* *v is t
 	if (*pos >= scull_nr_devs){
 		return NULL;
 	}
-	return scull_devices + *pos; 
+	return scull_devices + *pos;
 }
 
-static void *scull_seq_stop(struct seq_file *s, void *v)
+static void scull_seq_stop(struct seq_file *s, void *v)
 {
-
 }
 
 static int scull_seq_show(struct seq_file *s, void *v)
